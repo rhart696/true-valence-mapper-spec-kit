@@ -1,0 +1,17 @@
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+.env
+.vscode/
+*.swp
+*.swo
+
+# Test and temporary deployment files
+test-*.html
+test-*.py
+deploy-and-test-*.py
+verify-*.sql
+
+# Temporary review directories
+background-assets/reviews-evaluations/
