@@ -14,4 +14,4 @@ deploy-and-test-*.py
 verify-*.sql
 
 # Temporary review directories
-background-assets/reviews-evaluations/
+background-assets/reviews-evaluations/.venv

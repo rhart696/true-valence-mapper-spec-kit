@@ -1,0 +1,13 @@
+specification:
+  name: Person-Organization Relationship
+  version: 1.0.0
+  entities:
+    - person:
+        required_fields: [name, id]
+    - organization:
+        required_fields: [name, id, type]
+  relationship_types:
+    - employment:
+        start_date: required
+        end_date: optional
+        role: required
