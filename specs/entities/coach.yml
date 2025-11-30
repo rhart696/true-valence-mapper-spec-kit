@@ -1,0 +1,26 @@
+specification:
+  name: Coach Entity
+  version: 1.0.0
+  type: entity
+  
+  fields:
+    id:
+      type: string
+      required: true
+      description: Unique identifier for the coach
+    name:
+      type: string
+      required: true
+      description: Full name of the coach
+    email:
+      type: string
+      format: email
+      required: true
+    certification_status:
+      type: string
+      required: true
+      allowed_values: [active, inactive, pending]
+      description: ProActive certification status
+    certification_date:
+      type: date
+      required: true

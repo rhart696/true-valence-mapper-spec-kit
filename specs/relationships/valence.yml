@@ -1,0 +1,43 @@
+specification:
+  name: Valence Relationship
+  version: 1.0.0
+  type: relationship
+  
+  source_entity: Client
+  target_entity: Relationship Node
+  
+  fields:
+    trust_level:
+      type: integer
+      min: -5
+      max: 5
+      required: true
+      description: Level of trust in the relationship
+    communication_quality:
+      type: integer
+      min: -5
+      max: 5
+      required: true
+      description: Quality of communication
+    mutual_support:
+      type: integer
+      min: -5
+      max: 5
+      required: true
+      description: Degree of mutual support
+    professional_respect:
+      type: integer
+      min: -5
+      max: 5
+      required: true
+      description: Level of professional respect
+    goal_alignment:
+      type: integer
+      min: -5
+      max: 5
+      required: true
+      description: Alignment on goals
+    
+  validation:
+    - rule: "All valence dimensions must be integers between -5 and +5"
+    - rule: "Composite score is calculated as the average of all 5 dimensions"

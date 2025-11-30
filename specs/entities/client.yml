@@ -1,0 +1,23 @@
+specification:
+  name: Client Entity
+  version: 1.0.0
+  type: entity
+
+  fields:
+    id:
+      type: string
+      required: true
+    name:
+      type: string
+      required: true
+    email:
+      type: string
+      format: email
+      required: true
+    organization:
+      type: string
+      required: false
+    coach_id:
+      type: string
+      required: true
+      description: ID of the assigned ProActive coach

@@ -1,0 +1,28 @@
+specification:
+  name: Relationship Node Entity
+  version: 1.0.0
+  type: entity
+  description: A person in the client's professional network being mapped
+
+  fields:
+    id:
+      type: string
+      required: true
+    name:
+      type: string
+      required: true
+    role:
+      type: string
+      required: false
+    category:
+      type: string
+      required: true
+      allowed_values:
+        - Direct Report
+        - Manager/Supervisor
+        - Peer/Colleague
+        - Cross-functional Partner
+        - Internal Client
+        - External Stakeholder
+        - Mentor/Advisor
+      description: ProActive relationship category

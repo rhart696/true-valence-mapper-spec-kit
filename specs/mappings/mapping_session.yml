@@ -1,0 +1,36 @@
+specification:
+  name: Mapping Session Workflow
+  version: 1.0.0
+  type: workflow
+  
+  steps:
+    1. Create Session:
+        action: Initialize new mapping session
+        input: 
+          - Coach ID
+          - Client ID
+          - Date
+        output: Session ID
+        
+    2. Add Nodes:
+        action: Add Relationship Nodes to the map
+        input:
+          - Session ID
+          - List of {Name, Role, Category}
+        validation: "Must select a valid ProActive category for each node"
+        
+    3. Assess Valence:
+        action: Score valence for each relationship
+        input:
+          - Session ID
+          - Node ID
+          - 5 Dimension Scores (-5 to +5)
+        validation: "All 5 dimensions must be scored"
+        
+    4. Generate Insights:
+        action: Calculate composite scores and visualize
+        input: Session ID
+        output: 
+          - Network Graph
+          - Health Scores
+          - ProActive Prompts
