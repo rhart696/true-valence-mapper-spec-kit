@@ -1,12 +1,26 @@
 # AGENTS.md - True Valence Mapper (Spec-Kit Edition)
 
+## STOP - READ THIS FIRST
+
+**DO NOT install dependencies, add packages, or make architectural changes without explicit human approval.**
+
+This repository is ONE EDITION of a **multi-repository architecture** with 7 coordinated editions. Actions you take here affect the entire system.
+
+### Before ANY of these actions, STOP and ask the human:
+- Installing npm packages (`npm install <package>`)
+- Adding new dependencies to package.json
+- Creating new configuration files
+- Changing build tooling or project structure
+- Any action that modifies the dependency tree
+
+### Why this matters:
+- Dependencies may already exist in the parent repo's `shared/` directory
+- Other editions may have solved the same problem differently
+- Uncoordinated changes cause sync conflicts across 7 repositories
+
 ## Project Overview
 
 React 18 + TypeScript visualization tool for relationship pattern mapping.
-
-**CRITICAL: This is ONE EDITION of a multi-agent polyrepo architecture.**
-
-## Architecture Context
 
 | Key | Value |
 |-----|-------|
@@ -15,13 +29,13 @@ React 18 + TypeScript visualization tool for relationship pattern mapping.
 | Edition Focus | GitHub Spec-Kit integration, specification-driven development with AI agent guidance |
 | Auto-Sync | Changes to main trigger parent repo submodule update |
 
-Before making structural changes, architectural decisions, or adding dependencies:
-1. Clone parent repo for full context: `git clone --recursive git@github.com:rhart696/true-valence-mapper.git`
+**To understand the full architecture before making changes:**
+1. Clone parent repo: `git clone --recursive git@github.com:rhart696/true-valence-mapper.git`
 2. Check `shared/` directory for existing resources
 3. Review [GOVERNANCE.md](https://github.com/rhart696/true-valence-mapper/blob/main/docs/GOVERNANCE.md)
 4. Review [REPOSITORY-STRUCTURE.md](https://github.com/rhart696/true-valence-mapper/blob/main/docs/REPOSITORY-STRUCTURE.md)
 
-## Commands
+## Commands (for existing dependencies only)
 
 ```bash
 npm install          # Install dependencies
@@ -115,5 +129,5 @@ export function ExampleComponent({ value, onChange }: Props) {
 ---
 
 *This file is auto-generated from parent repo template. Manual edits may be overwritten.*
-*Template version: 1.0.0*
+*Template version: 1.1.0*
 *Last sync: 2025-12-01*
