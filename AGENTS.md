@@ -1,5 +1,10 @@
 # AGENTS.md - True Valence Mapper (Spec-Kit Edition)
 
+> **📚 GOVERNANCE DOCUMENTATION**
+> - This file: Global governance (applies to ALL editions)
+> - [AGENTS.local.md](./AGENTS.local.md): Edition-specific governance (if present)
+> - [Full Governance Workflow](https://github.com/rhart696/true-valence-mapper/blob/main/docs/GOVERNANCE-WORKFLOW.md)
+
 ## STOP - READ THIS FIRST
 
 **DO NOT install dependencies, add packages, or make architectural changes without explicit human approval.**
@@ -17,6 +22,9 @@ This repository is ONE EDITION of a **multi-repository architecture** with 7 coo
 - Dependencies may already exist in the parent repo's `shared/` directory
 - Other editions may have solved the same problem differently
 - Uncoordinated changes cause sync conflicts across 7 repositories
+
+### Edition-Specific Guidance
+If `AGENTS.local.md` exists in this repository, **read it after this file**. It contains edition-specific approvals, exceptions, and context that override or extend this global governance.
 
 ## Project Overview
 
@@ -129,5 +137,5 @@ export function ExampleComponent({ value, onChange }: Props) {
 ---
 
 *This file is auto-generated from parent repo template. Manual edits may be overwritten.*
-*Template version: 1.1.0*
+*Template version: 1.2.0*
 *Last sync: 2025-12-02*
