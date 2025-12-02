@@ -1,9 +1,11 @@
-
 import { Link, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Users, Network } from 'lucide-react';
+import { LayoutDashboard, Users, Network, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import '../index.css';
 
 export function Layout() {
+    const { user, logout } = useAuth();
+
     return (
         <div className="app-container">
             <header className="app-header">
@@ -22,8 +24,11 @@ export function Layout() {
                     </Link>
                 </nav>
                 <div className="user-profile">
-                    <div className="avatar">JD</div>
-                    <span>Jane Doe (Coach)</span>
+                    <div className="avatar">{user?.username?.[0]?.toUpperCase() || 'U'}</div>
+                    <span>{user?.username || 'User'}</span>
+                    <button onClick={logout} className="ml-4 p-1 hover:text-red-500" title="Sign out">
+                        <LogOut size={18} />
+                    </button>
                 </div>
             </header>
             <main className="app-main">
