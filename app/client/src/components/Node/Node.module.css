@@ -24,11 +24,37 @@
   height: 60px;
   border-radius: 50%;
   background-color: #4a90e2;
-  border: 2px solid #2c5aa0;
+  border: 3px solid #2c5aa0;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Trust score color-coding - based on outward trust */
+.node[data-trust-level='high'] .nodeCircle {
+  border-color: var(--trust-high);
+  border-width: 4px;
+}
+
+.node[data-trust-level='medium'] .nodeCircle {
+  border-color: var(--trust-medium);
+  border-width: 4px;
+}
+
+.node[data-trust-level='low'] .nodeCircle {
+  border-color: var(--trust-low);
+  border-width: 4px;
+}
+
+.node[data-trust-level='unscored'] .nodeCircle {
+  border-color: var(--trust-unscored);
+  border-width: 3px;
+}
+
+/* Uncertain relationships - dashed border */
+.node[data-uncertain='true'] .nodeCircle {
+  border-style: dashed;
 }
 
 /* Hover state - slightly larger and brighter */

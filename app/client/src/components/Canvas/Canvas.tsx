@@ -4,6 +4,7 @@ import { Node } from '../Node/Node';
 import { NodeEditor } from '../NodeEditor/NodeEditor';
 import { ZoomPanControls } from '../ZoomPanControls/ZoomPanControls';
 import { TrustScoreEditor } from '../TrustScoreEditor/TrustScoreEditor';
+import { TrustArrows } from '../TrustArrows/TrustArrows';
 import type { Position, TrustScore } from '../../types';
 import styles from './Canvas.module.css';
 
@@ -200,6 +201,9 @@ export function Canvas() {
             transformOrigin: 'center center',
           }}
         >
+          {/* Trust arrows between nodes */}
+          <TrustArrows nodes={state.nodes} />
+
           {/* Render all nodes */}
           {state.nodes.map((node) => (
             <Node

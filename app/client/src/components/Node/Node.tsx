@@ -120,6 +120,8 @@ export function Node({
     [id, isSelf, onRemove]
   );
 
+  const { trustScore } = node;
+
   return (
     <div
       className={`${styles.node} ${isSelf ? styles.selfNode : ''} ${
@@ -129,6 +131,8 @@ export function Node({
         transform: `translate(${position.x}px, ${position.y}px)`,
       }}
       data-node-id={id}
+      data-trust-level={trustScore?.outward ?? 'unscored'}
+      data-uncertain={trustScore?.uncertain ? 'true' : 'false'}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
       {...(!isSelf && !isEditing ? dragHandlers : {})}
