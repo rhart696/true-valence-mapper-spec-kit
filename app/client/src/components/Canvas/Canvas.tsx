@@ -1,9 +1,10 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { useCanvasState } from '../../hooks/useCanvasState';
 import { Node } from '../Node/Node';
 import { NodeEditor } from '../NodeEditor/NodeEditor';
 import { ZoomPanControls } from '../ZoomPanControls/ZoomPanControls';
-import type { Position } from '../../types';
+import { TrustScoreEditor } from '../TrustScoreEditor/TrustScoreEditor';
+import type { Position, TrustScore } from '../../types';
 import styles from './Canvas.module.css';
 
 /**
@@ -24,11 +25,15 @@ export function Canvas() {
     removeNode,
     setEditingNodeId,
     updateViewTransform,
+    updateTrustScore,
   } = useCanvasState();
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const isPanningRef = useRef(false);
   const lastTouchDistance = useRef<number | null>(null);
+
+  // Track which node is having its trust score edited
+  const [scoringNodeId, setScoringNodeId] = useState<string | null>(null);
 
   const handleNodePositionChange = (nodeId: string, position: Position) => {
     updateNodePosition(nodeId, position);
@@ -74,6 +79,22 @@ export function Canvas() {
 
   const handleStopEdit = () => {
     setEditingNodeId(null);
+  };
+
+  // Trust scoring handlers
+  const handleStartScoring = (nodeId: string) => {
+    setScoringNodeId(nodeId);
+  };
+
+  const handleSaveTrustScore = (trustScore: TrustScore) => {
+    if (scoringNodeId) {
+      updateTrustScore(scoringNodeId, trustScore);
+      setScoringNodeId(null);
+    }
+  };
+
+  const handleCancelTrustScore = () => {
+    setScoringNodeId(null);
   };
 
   // Zoom controls
@@ -190,10 +211,25 @@ export function Canvas() {
               onRemove={handleNodeRemove}
               onStartEdit={handleStartEdit}
               onStopEdit={handleStopEdit}
+              onStartScoring={handleStartScoring}
             />
           ))}
         </div>
       </div>
+
+      {/* Trust score editor modal */}
+      {scoringNodeId && (
+        <TrustScoreEditor
+          personName={
+            state.nodes.find((n) => n.id === scoringNodeId)?.name ?? 'Unknown'
+          }
+          currentScore={
+            state.nodes.find((n) => n.id === scoringNodeId)?.trustScore
+          }
+          onSave={handleSaveTrustScore}
+          onCancel={handleCancelTrustScore}
+        />
+      )}
     </div>
   );
 }

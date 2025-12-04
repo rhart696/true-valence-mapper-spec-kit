@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { CanvasState, PersonNode, Position } from '../types';
+import type { CanvasState, PersonNode, Position, TrustScore } from '../types';
 
 /**
  * Custom hook for managing canvas state.
@@ -125,6 +125,21 @@ export function useCanvasState() {
     }));
   }, []);
 
+  /**
+   * Update trust score for a node.
+   * Cannot set trust score on self node.
+   */
+  const updateTrustScore = useCallback((nodeId: string, trustScore: TrustScore) => {
+    setState((prev) => ({
+      ...prev,
+      nodes: prev.nodes.map((node) =>
+        node.id === nodeId && !node.isSelf
+          ? { ...node, trustScore }
+          : node
+      ),
+    }));
+  }, []);
+
   return {
     state,
     addNode,
@@ -133,5 +148,6 @@ export function useCanvasState() {
     removeNode,
     updateViewTransform,
     setEditingNodeId,
+    updateTrustScore,
   };
 }

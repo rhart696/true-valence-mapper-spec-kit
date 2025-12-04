@@ -11,6 +11,7 @@ interface NodeProps {
   onRemove?: (nodeId: string) => void;
   onStartEdit?: (nodeId: string) => void;
   onStopEdit?: () => void;
+  onStartScoring?: (nodeId: string) => void;
 }
 
 /**
@@ -29,6 +30,7 @@ export function Node({
   onRemove,
   onStartEdit,
   onStopEdit,
+  onStartScoring,
 }: NodeProps) {
   const { id, name, position, isSelf } = node;
   const dragStartPos = useRef<Position>(position);
@@ -67,6 +69,13 @@ export function Node({
     onDragMove: handleDragMove,
     disabled: isSelf || isEditing, // Disable drag when editing
   });
+
+  const handleClick = useCallback(() => {
+    // Single click opens trust scoring (unless it's the self node)
+    if (!isSelf && !isEditing && onStartScoring) {
+      onStartScoring(id);
+    }
+  }, [id, isSelf, isEditing, onStartScoring]);
 
   const handleDoubleClick = useCallback(() => {
     if (!isSelf && onStartEdit) {
@@ -120,6 +129,7 @@ export function Node({
         transform: `translate(${position.x}px, ${position.y}px)`,
       }}
       data-node-id={id}
+      onClick={handleClick}
       onDoubleClick={handleDoubleClick}
       {...(!isSelf && !isEditing ? dragHandlers : {})}
     >
