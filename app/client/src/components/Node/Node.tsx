@@ -59,7 +59,7 @@ export function Node({
       // Update drag start position for next move
       dragStartPos.current = screenPos;
     },
-    [nodeId, position, onPositionChange]
+    [id, position, onPositionChange]
   );
 
   const dragHandlers = useDragAndDrop(id, {

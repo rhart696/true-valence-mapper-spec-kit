@@ -35,14 +35,28 @@ export function Canvas() {
   };
 
   const handleAddPerson = (name: string) => {
-    // Add node with random offset from center (400, 300)
-    // Random offset: -100 to +100 pixels in both directions
-    const offsetX = Math.random() * 200 - 100;
-    const offsetY = Math.random() * 200 - 100;
+    // Calculate radial position around center (400, 300)
+    // Non-self nodes are arranged in a circle around the center
+    const nonSelfNodes = state.nodes.filter(n => !n.isSelf);
+    const nodeIndex = nonSelfNodes.length;
 
-    addNode(name, {
-      x: 400 + offsetX,
-      y: 300 + offsetY,
+    // Distribute nodes evenly in a circle
+    // Radius: 150px from center
+    const radius = 150;
+    const angleStep = (2 * Math.PI) / Math.max(1, nonSelfNodes.length + 1);
+    const angle = nodeIndex * angleStep;
+
+    const x = 400 + radius * Math.cos(angle);
+    const y = 300 + radius * Math.sin(angle);
+
+    addNode(name, { x, y });
+
+    // Reposition existing nodes to maintain even spacing
+    nonSelfNodes.forEach((node, index) => {
+      const newAngle = index * angleStep;
+      const newX = 400 + radius * Math.cos(newAngle);
+      const newY = 300 + radius * Math.sin(newAngle);
+      updateNodePosition(node.id, { x: newX, y: newY });
     });
   };
 
