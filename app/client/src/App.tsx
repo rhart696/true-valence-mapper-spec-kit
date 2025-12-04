@@ -5,6 +5,7 @@ import { Clients } from './pages/Clients';
 import { Session } from './pages/Session';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { CanvasTest } from './pages/CanvasTest';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/canvas-test" element={<CanvasTest />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Layout />}>

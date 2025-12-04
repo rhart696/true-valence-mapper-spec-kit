@@ -41,7 +41,7 @@ export const Login = () => {
                 <div className="text-center">
                     <h2 className="text-3xl font-bold tracking-tight text-slate-900">Sign in</h2>
                     <p className="mt-2 text-sm text-slate-600">
-                        Welcome back to True Valence Mapper
+                        Welcome back to ProActive Trust Valence Mapper
                     </p>
                 </div>
 
