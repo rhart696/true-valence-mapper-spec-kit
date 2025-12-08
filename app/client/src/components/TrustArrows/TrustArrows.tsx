@@ -1,7 +1,8 @@
-import type { PersonNode, TrustLevel } from '../../types';
+import type { PersonNode, TrustLevel, ViewTransform } from '../../types';
 
 interface TrustArrowsProps {
   nodes: PersonNode[];
+  viewTransform: ViewTransform;
 }
 
 /**
@@ -17,7 +18,7 @@ interface TrustArrowsProps {
  * - Red: low trust
  * - Gray: unscored
  */
-export function TrustArrows({ nodes }: TrustArrowsProps) {
+export function TrustArrows({ nodes, viewTransform }: TrustArrowsProps) {
   const selfNode = nodes.find((n) => n.isSelf);
   if (!selfNode) return null;
 
@@ -43,13 +44,14 @@ export function TrustArrows({ nodes }: TrustArrowsProps) {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '800px', // Match canvas dimensions
-        height: '600px',
+        width: '100%',
+        height: '100%',
         pointerEvents: 'none',
         zIndex: 0,
         overflow: 'visible',
+        transform: `scale(${viewTransform.zoom}) translate(${viewTransform.panX}px, ${viewTransform.panY}px)`,
+        transformOrigin: 'center center',
       }}
-      viewBox="0 0 800 600"
     >
       <defs>
         {/* Arrowhead markers for each trust level */}

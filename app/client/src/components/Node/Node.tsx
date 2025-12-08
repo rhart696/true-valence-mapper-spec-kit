@@ -71,18 +71,19 @@ export function Node({
   });
 
   const handleClick = useCallback(() => {
-    // Single click opens trust scoring (unless it's the self node)
-    if (!isSelf && !isEditing && onStartScoring) {
-      onStartScoring(id);
-    }
-  }, [id, isSelf, isEditing, onStartScoring]);
-
-  const handleDoubleClick = useCallback(() => {
+    // Single click enables edit mode (rename)
     if (!isSelf && onStartEdit) {
       onStartEdit(id);
       setEditValue(name);
     }
   }, [id, name, isSelf, onStartEdit]);
+
+  const handleDoubleClick = useCallback(() => {
+    // Double click opens trust scoring
+    if (!isSelf && !isEditing && onStartScoring) {
+      onStartScoring(id);
+    }
+  }, [id, isSelf, isEditing, onStartScoring]);
 
   const handleEditKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {

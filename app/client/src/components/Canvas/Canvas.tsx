@@ -194,6 +194,9 @@ export function Canvas() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+        {/* Trust arrows layer (not transformed) */}
+        <TrustArrows nodes={state.nodes} viewTransform={state.viewTransform} />
+
         <div
           className={styles.canvasTransform}
           style={{
@@ -201,9 +204,6 @@ export function Canvas() {
             transformOrigin: 'center center',
           }}
         >
-          {/* Trust arrows between nodes */}
-          <TrustArrows nodes={state.nodes} />
-
           {/* Render all nodes */}
           {state.nodes.map((node) => (
             <Node
