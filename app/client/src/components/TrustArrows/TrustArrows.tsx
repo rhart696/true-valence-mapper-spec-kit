@@ -103,33 +103,45 @@ export function TrustArrows({ nodes }: TrustArrowsProps) {
         const { trustScore } = node;
         if (!trustScore) return null;
 
-        // Calculate offset to start/end arrows at edge of circles (30px radius)
-        const dx = node.position.x - selfNode.position.x;
-        const dy = node.position.y - selfNode.position.y;
+        // Node positions are top-left corners of 60px containers
+        // Calculate center points (add 30px to x and y)
+        const NODE_RADIUS = 30;
+        const selfCenter = {
+          x: selfNode.position.x + NODE_RADIUS,
+          y: selfNode.position.y + NODE_RADIUS,
+        };
+        const nodeCenter = {
+          x: node.position.x + NODE_RADIUS,
+          y: node.position.y + NODE_RADIUS,
+        };
+
+        // Calculate offset to start/end arrows at edge of circles
+        const dx = nodeCenter.x - selfCenter.x;
+        const dy = nodeCenter.y - selfCenter.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const offsetX = (dx / distance) * 30;
-        const offsetY = (dy / distance) * 30;
+        const offsetX = (dx / distance) * NODE_RADIUS;
+        const offsetY = (dy / distance) * NODE_RADIUS;
 
         // Outward arrow: from self to person
         const outwardStart = {
-          x: selfNode.position.x + offsetX,
-          y: selfNode.position.y + offsetY,
+          x: selfCenter.x + offsetX,
+          y: selfCenter.y + offsetY,
         };
         const outwardEnd = {
-          x: node.position.x - offsetX,
-          y: node.position.y - offsetY,
+          x: nodeCenter.x - offsetX,
+          y: nodeCenter.y - offsetY,
         };
 
         // Inward arrow: from person to self (slightly offset for visibility)
         const perpX = -dy / distance * 8; // Perpendicular offset
         const perpY = dx / distance * 8;
         const inwardStart = {
-          x: node.position.x - offsetX + perpX,
-          y: node.position.y - offsetY + perpY,
+          x: nodeCenter.x - offsetX + perpX,
+          y: nodeCenter.y - offsetY + perpY,
         };
         const inwardEnd = {
-          x: selfNode.position.x + offsetX + perpX,
-          y: selfNode.position.y + offsetY + perpY,
+          x: selfCenter.x + offsetX + perpX,
+          y: selfCenter.y + offsetY + perpY,
         };
 
         return (
