@@ -124,12 +124,12 @@ export function TrustArrows({ nodes }: TrustArrowsProps) {
         const perpX = -dy / distance * 8; // Perpendicular offset
         const perpY = dx / distance * 8;
         const inwardStart = {
-          x: node.position.x + offsetX + perpX,
-          y: node.position.y + offsetY + perpY,
+          x: node.position.x - offsetX + perpX,
+          y: node.position.y - offsetY + perpY,
         };
         const inwardEnd = {
-          x: selfNode.position.x - offsetX + perpX,
-          y: selfNode.position.y - offsetY + perpY,
+          x: selfNode.position.x + offsetX + perpX,
+          y: selfNode.position.y + offsetY + perpY,
         };
 
         return (
