@@ -1,14 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --background: #f8fafc;
+  /* ProActive Brand Colors - Teal/Turquoise palette */
+  --primary: #14b8a6; /* Teal-500 - ProActive primary */
+  --primary-dark: #0d9488; /* Teal-600 - darker teal */
+  --primary-light: #5eead4; /* Teal-300 - lighter teal */
+  --background: #f0fdfa; /* Teal-50 - subtle teal background */
   --surface: #ffffff;
   --text: #0f172a;
   --text-muted: #64748b;
-  --border: #e2e8f0;
+  --border: #99f6e4; /* Teal-200 - teal-tinted borders */
   --success: #10b981;
+
+  /* Trust Score Colors */
+  --trust-high: #10b981; /* Green - high trust */
+  --trust-medium: #fbbf24; /* Yellow - medium trust */
+  --trust-low: #ef4444; /* Red - low trust */
+  --trust-unscored: #94a3b8; /* Gray - no score */
 }
 
 body {
@@ -62,7 +70,7 @@ body {
 
 .nav-link:hover,
 .nav-link.active {
-  background-color: #eff6ff;
+  background-color: #ccfbf1; /* Teal-100 */
   color: var(--primary);
 }
 

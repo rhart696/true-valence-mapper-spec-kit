@@ -11,7 +11,7 @@ export function Layout() {
             <header className="app-header">
                 <div className="logo">
                     <Network className="icon" />
-                    <h1>True Valence Mapper</h1>
+                    <h1>ProActive Trust Valence Mapper</h1>
                 </div>
                 <nav>
                     <Link to="/" className="nav-link">
