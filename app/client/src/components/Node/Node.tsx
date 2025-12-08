@@ -143,6 +143,9 @@ export function Node({
           <>
             <button
               className={styles.trustButton}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 onStartScoring?.(id);
@@ -153,6 +156,9 @@ export function Node({
             </button>
             <button
               className={styles.removeButton}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
               onClick={handleRemove}
               title="Remove person"
             >
