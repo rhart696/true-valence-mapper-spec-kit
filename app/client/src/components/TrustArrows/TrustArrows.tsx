@@ -24,13 +24,13 @@ export function TrustArrows({ nodes }: TrustArrowsProps) {
   const getTrustColor = (level: TrustLevel): string => {
     switch (level) {
       case 'high':
-        return 'var(--trust-high)';
+        return 'rgb(16, 185, 129)'; // Green - Tailwind emerald-500
       case 'medium':
-        return 'var(--trust-medium)';
+        return 'rgb(234, 179, 8)'; // Yellow - Tailwind yellow-500
       case 'low':
-        return 'var(--trust-low)';
+        return 'rgb(239, 68, 68)'; // Red - Tailwind red-500
       case 'unscored':
-        return 'var(--trust-unscored)';
+        return 'rgb(148, 163, 184)'; // Gray - Tailwind slate-400
     }
   };
 
@@ -43,11 +43,13 @@ export function TrustArrows({ nodes }: TrustArrowsProps) {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: '800px', // Match canvas dimensions
+        height: '600px',
         pointerEvents: 'none',
         zIndex: 0,
+        overflow: 'visible',
       }}
+      viewBox="0 0 800 600"
     >
       <defs>
         {/* Arrowhead markers for each trust level */}
