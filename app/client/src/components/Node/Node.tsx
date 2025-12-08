@@ -140,13 +140,25 @@ export function Node({
     >
       <div className={styles.nodeCircle}>
         {!isSelf && !isEditing && (
-          <button
-            className={styles.removeButton}
-            onClick={handleRemove}
-            title="Remove person"
-          >
-            ×
-          </button>
+          <>
+            <button
+              className={styles.trustButton}
+              onClick={(e) => {
+                e.stopPropagation();
+                onStartScoring?.(id);
+              }}
+              title="Set trust score"
+            >
+              ♥
+            </button>
+            <button
+              className={styles.removeButton}
+              onClick={handleRemove}
+              title="Remove person"
+            >
+              ×
+            </button>
+          </>
         )}
       </div>
       {isEditing ? (
