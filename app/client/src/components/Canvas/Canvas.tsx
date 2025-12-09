@@ -1,11 +1,12 @@
 import { useRef, useCallback, useState } from 'react';
 import { useCanvasState } from '../../hooks/useCanvasState';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { Node } from '../Node/Node';
 import { NodeEditor } from '../NodeEditor/NodeEditor';
 import { ZoomPanControls } from '../ZoomPanControls/ZoomPanControls';
 import { TrustScoreEditor } from '../TrustScoreEditor/TrustScoreEditor';
 import { TrustArrows } from '../TrustArrows/TrustArrows';
-import type { Position, TrustScore } from '../../types';
+import type { Position, TrustScore, PanDirection } from '../../types';
 import styles from './Canvas.module.css';
 
 /**
@@ -25,6 +26,7 @@ export function Canvas() {
     updateNodeName,
     removeNode,
     setEditingNodeId,
+    setSelectedNodeId,
     updateViewTransform,
     updateTrustScore,
   } = useCanvasState();
@@ -181,9 +183,8 @@ export function Canvas() {
           Math.min(2.0, state.viewTransform.zoom + zoomDelta)
         );
 
-        // Two-finger pan (use center point movement)
-        const centerX = (touch1.clientX + touch2.clientX) / 2;
-        const centerY = (touch1.clientY + touch2.clientY) / 2;
+        // TODO: Two-finger pan could use center point movement
+        // For now, only zoom is implemented
 
         updateViewTransform({ zoom: newZoom });
         lastTouchDistance.current = distance;
@@ -196,6 +197,124 @@ export function Canvas() {
     lastTouchDistance.current = null;
     isPanningRef.current = false;
   }, []);
+
+  // Keyboard shortcut handlers
+  const handleKeyboardCancel = useCallback(() => {
+    // Cancel edit mode if editing
+    if (state.editingNodeId) {
+      setEditingNodeId(null);
+      return;
+    }
+    // Close trust score modal if open
+    if (scoringNodeId) {
+      setScoringNodeId(null);
+      return;
+    }
+    // Clear selection
+    if (state.selectedNodeId) {
+      setSelectedNodeId(null);
+    }
+  }, [state.editingNodeId, state.selectedNodeId, scoringNodeId, setEditingNodeId, setSelectedNodeId]);
+
+  const handleKeyboardConfirm = useCallback(() => {
+    // Confirm is handled by Node component's onStopEdit for inline editing
+    // For trust score modal, the save button is used
+    // This is a no-op at canvas level - individual components handle their own confirm
+  }, []);
+
+  const handleKeyboardZoom = useCallback((delta: number) => {
+    // delta is +1 for zoom in, -1 for zoom out
+    const zoomIncrement = 0.1;
+    const newZoom = state.viewTransform.zoom + (delta * zoomIncrement);
+    const clampedZoom = Math.max(0.25, Math.min(2.0, newZoom));
+    updateViewTransform({ zoom: clampedZoom });
+  }, [state.viewTransform.zoom, updateViewTransform]);
+
+  const handleKeyboardPan = useCallback((direction: PanDirection) => {
+    const panIncrement = 50;
+    let newPanX = state.viewTransform.panX;
+    let newPanY = state.viewTransform.panY;
+
+    // Arrow keys move the viewport (content moves opposite direction visually)
+    switch (direction) {
+      case 'up':
+        newPanY += panIncrement;
+        break;
+      case 'down':
+        newPanY -= panIncrement;
+        break;
+      case 'left':
+        newPanX += panIncrement;
+        break;
+      case 'right':
+        newPanX -= panIncrement;
+        break;
+    }
+
+    updateViewTransform({ panX: newPanX, panY: newPanY });
+  }, [state.viewTransform.panX, state.viewTransform.panY, updateViewTransform]);
+
+  const handleKeyboardDelete = useCallback(() => {
+    if (!state.selectedNodeId) return;
+
+    // Find the selected node
+    const selectedNode = state.nodes.find(n => n.id === state.selectedNodeId);
+    if (!selectedNode) return;
+
+    // Cannot delete self node
+    if (selectedNode.isSelf) return;
+
+    removeNode(state.selectedNodeId);
+  }, [state.selectedNodeId, state.nodes, removeNode]);
+
+  const handleKeyboardCenter = useCallback(() => {
+    // Find the self node
+    const selfNode = state.nodes.find(n => n.isSelf);
+    if (!selfNode) return;
+
+    // Get canvas dimensions
+    const canvasWidth = canvasRef.current?.clientWidth || 800;
+    const canvasHeight = canvasRef.current?.clientHeight || 600;
+    const centerX = canvasWidth / 2;
+    const centerY = canvasHeight / 2;
+
+    // Calculate pan offset to center the self node
+    // The self node position is relative to the canvas center
+    const panX = centerX - selfNode.position.x;
+    const panY = centerY - selfNode.position.y;
+
+    updateViewTransform({ panX, panY });
+  }, [state.nodes, updateViewTransform]);
+
+  // Click on empty canvas to clear selection and set focus
+  const handleCanvasClick = useCallback((e: React.MouseEvent) => {
+    // Only clear selection if clicking directly on canvas (not on a node)
+    if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains(styles.canvasTransform)) {
+      setSelectedNodeId(null);
+      // Ensure canvas keeps focus for keyboard shortcuts
+      canvasRef.current?.focus();
+    }
+  }, [setSelectedNodeId]);
+
+  // Node selection handler
+  const handleNodeSelect = useCallback((nodeId: string) => {
+    setSelectedNodeId(nodeId);
+  }, [setSelectedNodeId]);
+
+  // Determine if keyboard shortcuts should be enabled
+  // Disabled when editing node name or trust score
+  const keyboardEnabled = !state.editingNodeId && !scoringNodeId;
+
+  // Initialize keyboard shortcuts hook
+  useKeyboardShortcuts({
+    enabled: keyboardEnabled,
+    onCancel: handleKeyboardCancel,
+    onConfirm: handleKeyboardConfirm,
+    onZoom: handleKeyboardZoom,
+    onPan: handleKeyboardPan,
+    onDelete: handleKeyboardDelete,
+    onCenter: handleKeyboardCenter,
+  });
 
   return (
     <div className={styles.canvasContainer}>
@@ -214,6 +333,8 @@ export function Canvas() {
       <div
         ref={canvasRef}
         className={styles.canvas}
+        tabIndex={0}
+        onClick={handleCanvasClick}
         onWheel={handleWheel}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -235,12 +356,14 @@ export function Canvas() {
               key={node.id}
               node={node}
               isEditing={state.editingNodeId === node.id}
+              isSelected={state.selectedNodeId === node.id}
               onPositionChange={handleNodePositionChange}
               onNameChange={handleNodeNameChange}
               onRemove={handleNodeRemove}
               onStartEdit={handleStartEdit}
               onStopEdit={handleStopEdit}
               onStartScoring={handleStartScoring}
+              onSelect={handleNodeSelect}
             />
           ))}
         </div>

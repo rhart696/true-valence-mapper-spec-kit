@@ -26,6 +26,7 @@ export function useCanvasState() {
       panY: 0,
     },
     editingNodeId: null,
+    selectedNodeId: null,
   });
 
   /**
@@ -86,12 +87,14 @@ export function useCanvasState() {
   /**
    * Remove a node from the canvas.
    * Cannot remove the self node.
+   * Clears editingNodeId and selectedNodeId if they reference the removed node.
    */
   const removeNode = useCallback((nodeId: string) => {
     setState((prev) => ({
       ...prev,
       nodes: prev.nodes.filter((node) => node.id !== nodeId || node.isSelf),
       editingNodeId: prev.editingNodeId === nodeId ? null : prev.editingNodeId,
+      selectedNodeId: prev.selectedNodeId === nodeId ? null : prev.selectedNodeId,
     }));
   }, []);
 
@@ -126,6 +129,17 @@ export function useCanvasState() {
   }, []);
 
   /**
+   * Set the ID of the selected node for keyboard operations (or null to clear).
+   * Selection is separate from editing - used by Delete key handler.
+   */
+  const setSelectedNodeId = useCallback((nodeId: string | null) => {
+    setState((prev) => ({
+      ...prev,
+      selectedNodeId: nodeId,
+    }));
+  }, []);
+
+  /**
    * Update trust score for a node.
    * Cannot set trust score on self node.
    */
@@ -148,6 +162,7 @@ export function useCanvasState() {
     removeNode,
     updateViewTransform,
     setEditingNodeId,
+    setSelectedNodeId,
     updateTrustScore,
   };
 }
