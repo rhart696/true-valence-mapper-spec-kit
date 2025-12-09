@@ -8,3 +8,8 @@
 export type { PersonNode, TrustLevel, TrustScore } from './node';
 export type { Position } from './position';
 export type { CanvasState, ViewTransform } from './canvas';
+export type {
+  KeyboardShortcutAction,
+  UseKeyboardShortcutsOptions,
+  PanDirection,
+} from './keyboard';

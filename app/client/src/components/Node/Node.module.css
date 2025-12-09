@@ -112,6 +112,15 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Selected state - visual indicator for keyboard operations */
+.selected .nodeCircle {
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
+}
+
+.selected:not(.editing) .nodeCircle {
+  border-color: #3b82f6;
+}
+
 /* Editing state - highlighted border */
 .editing .nodeCircle {
   border-color: #10b981;
