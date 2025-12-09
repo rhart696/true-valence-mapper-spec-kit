@@ -47,9 +47,12 @@ export function Canvas() {
     const nodeIndex = nonSelfNodes.length;
 
     // Distribute nodes evenly in a circle
-    // Radius: 150px from center
-    const radius = 150;
-    const angleStep = (2 * Math.PI) / Math.max(1, nonSelfNodes.length + 1);
+    // Adaptive radius: grows with node count to prevent overlap
+    // Base: 150px, grows by 20px per node after 8 nodes
+    const totalNodes = nonSelfNodes.length + 1; // Include the new node
+    const radius = totalNodes <= 8 ? 150 : 150 + (totalNodes - 8) * 20;
+
+    const angleStep = (2 * Math.PI) / Math.max(1, totalNodes);
     const angle = nodeIndex * angleStep;
 
     const x = 400 + radius * Math.cos(angle);
