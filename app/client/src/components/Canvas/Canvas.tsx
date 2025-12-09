@@ -67,6 +67,24 @@ export function Canvas() {
       const newY = 300 + radius * Math.sin(newAngle);
       updateNodePosition(node.id, { x: newX, y: newY });
     });
+
+    // Auto-zoom to fit all nodes when radius exceeds viewport
+    // Canvas viewport is ~800x600, account for node size (120px wide, 90px tall)
+    const nodeMargin = 120; // Max node width + some padding
+    const requiredWidth = (radius * 2) + nodeMargin;
+    const requiredHeight = (radius * 2) + nodeMargin;
+    const canvasWidth = canvasRef.current?.clientWidth || 800;
+    const canvasHeight = canvasRef.current?.clientHeight || 600;
+
+    // Calculate zoom needed to fit (use smaller dimension as constraint)
+    const zoomX = canvasWidth / requiredWidth;
+    const zoomY = canvasHeight / requiredHeight;
+    const requiredZoom = Math.min(1.0, zoomX, zoomY);
+
+    // Only zoom out if needed (don't zoom in)
+    if (requiredZoom < state.viewTransform.zoom) {
+      updateViewTransform({ zoom: requiredZoom });
+    }
   };
 
   const handleNodeNameChange = (nodeId: string, name: string) => {
