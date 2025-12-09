@@ -70,7 +70,11 @@ export function Node({
     disabled: isSelf || isEditing, // Disable drag when editing
   });
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // Don't open edit mode if clicking on a button
+    if ((e.target as HTMLElement).tagName === 'BUTTON') {
+      return;
+    }
     // Single click enables edit mode (rename)
     if (!isSelf && onStartEdit) {
       onStartEdit(id);
