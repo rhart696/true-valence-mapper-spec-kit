@@ -105,16 +105,19 @@ export function TrustArrows({ nodes, viewTransform }: TrustArrowsProps) {
         const { trustScore } = node;
         if (!trustScore) return null;
 
-        // Node positions are top-left corners of 60px containers
-        // Calculate center points (add 30px to x and y)
+        // Node positions are top-left corners of 120px wide containers
+        // Circle is at left: 30px, width: 60px, so center is at x + 60px, y + 30px
         const NODE_RADIUS = 30;
+        const CIRCLE_CENTER_X_OFFSET = 60; // 30px (left position) + 30px (radius)
+        const CIRCLE_CENTER_Y_OFFSET = 30; // Circle is at top, so just radius
+
         const selfCenter = {
-          x: selfNode.position.x + NODE_RADIUS,
-          y: selfNode.position.y + NODE_RADIUS,
+          x: selfNode.position.x + CIRCLE_CENTER_X_OFFSET,
+          y: selfNode.position.y + CIRCLE_CENTER_Y_OFFSET,
         };
         const nodeCenter = {
-          x: node.position.x + NODE_RADIUS,
-          y: node.position.y + NODE_RADIUS,
+          x: node.position.x + CIRCLE_CENTER_X_OFFSET,
+          y: node.position.y + CIRCLE_CENTER_Y_OFFSET,
         };
 
         // Calculate offset to start/end arrows at edge of circles

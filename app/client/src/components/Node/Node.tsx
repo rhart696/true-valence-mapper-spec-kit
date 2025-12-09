@@ -38,17 +38,17 @@ export function Node({
 
   const handleDragStart = useCallback(
     (nodeId: string, screenPos: Position) => {
-      // Store initial position for offset calculations
-      dragStartPos.current = position;
+      // Store initial screen position for delta calculations
+      dragStartPos.current = screenPos;
     },
-    [position]
+    []
   );
 
   const handleDragMove = useCallback(
     (nodeId: string, screenPos: Position) => {
       if (!onPositionChange) return;
 
-      // Calculate delta from drag start
+      // Calculate delta from drag start (screen coordinates)
       const deltaX = screenPos.x - dragStartPos.current.x;
       const deltaY = screenPos.y - dragStartPos.current.y;
 
