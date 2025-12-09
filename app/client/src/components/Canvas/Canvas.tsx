@@ -41,7 +41,12 @@ export function Canvas() {
   };
 
   const handleAddPerson = (name: string) => {
-    // Calculate radial position around center (400, 300)
+    // Get canvas dimensions for dynamic centering
+    const canvasWidth = canvasRef.current?.clientWidth || 800;
+    const canvasHeight = canvasRef.current?.clientHeight || 600;
+    const centerX = canvasWidth / 2;
+    const centerY = canvasHeight / 2;
+
     // Non-self nodes are arranged in a circle around the center
     const nonSelfNodes = state.nodes.filter(n => !n.isSelf);
     const nodeIndex = nonSelfNodes.length;
@@ -55,26 +60,24 @@ export function Canvas() {
     const angleStep = (2 * Math.PI) / Math.max(1, totalNodes);
     const angle = nodeIndex * angleStep;
 
-    const x = 400 + radius * Math.cos(angle);
-    const y = 300 + radius * Math.sin(angle);
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
 
     addNode(name, { x, y });
 
     // Reposition existing nodes to maintain even spacing
     nonSelfNodes.forEach((node, index) => {
       const newAngle = index * angleStep;
-      const newX = 400 + radius * Math.cos(newAngle);
-      const newY = 300 + radius * Math.sin(newAngle);
+      const newX = centerX + radius * Math.cos(newAngle);
+      const newY = centerY + radius * Math.sin(newAngle);
       updateNodePosition(node.id, { x: newX, y: newY });
     });
 
     // Auto-zoom to fit all nodes when radius exceeds viewport
-    // Canvas viewport is ~800x600, account for node size (120px wide, 90px tall)
+    // Account for node size (120px wide, 90px tall)
     const nodeMargin = 120; // Max node width + some padding
     const requiredWidth = (radius * 2) + nodeMargin;
     const requiredHeight = (radius * 2) + nodeMargin;
-    const canvasWidth = canvasRef.current?.clientWidth || 800;
-    const canvasHeight = canvasRef.current?.clientHeight || 600;
 
     // Calculate zoom needed to fit (use smaller dimension as constraint)
     const zoomX = canvasWidth / requiredWidth;
@@ -82,7 +85,8 @@ export function Canvas() {
     const requiredZoom = Math.min(1.0, zoomX, zoomY);
 
     // Only zoom out if needed (don't zoom in)
-    if (requiredZoom < state.viewTransform.zoom) {
+    // Only auto-zoom when adding nodes, don't interfere with manual zoom
+    if (requiredZoom < 1.0 && requiredZoom < state.viewTransform.zoom) {
       updateViewTransform({ zoom: requiredZoom });
     }
   };
