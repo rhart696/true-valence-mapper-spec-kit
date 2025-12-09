@@ -41,29 +41,54 @@ export function Canvas() {
   };
 
   const handleAddPerson = (name: string) => {
-    // Calculate radial position around center (400, 300)
+    // Get canvas dimensions for dynamic centering
+    const canvasWidth = canvasRef.current?.clientWidth || 800;
+    const canvasHeight = canvasRef.current?.clientHeight || 600;
+    const centerX = canvasWidth / 2;
+    const centerY = canvasHeight / 2;
+
     // Non-self nodes are arranged in a circle around the center
     const nonSelfNodes = state.nodes.filter(n => !n.isSelf);
     const nodeIndex = nonSelfNodes.length;
 
     // Distribute nodes evenly in a circle
-    // Radius: 150px from center
-    const radius = 150;
-    const angleStep = (2 * Math.PI) / Math.max(1, nonSelfNodes.length + 1);
+    // Adaptive radius: grows with node count to prevent overlap
+    // Base: 150px, grows by 20px per node after 8 nodes
+    const totalNodes = nonSelfNodes.length + 1; // Include the new node
+    const radius = totalNodes <= 8 ? 150 : 150 + (totalNodes - 8) * 20;
+
+    const angleStep = (2 * Math.PI) / Math.max(1, totalNodes);
     const angle = nodeIndex * angleStep;
 
-    const x = 400 + radius * Math.cos(angle);
-    const y = 300 + radius * Math.sin(angle);
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
 
     addNode(name, { x, y });
 
     // Reposition existing nodes to maintain even spacing
     nonSelfNodes.forEach((node, index) => {
       const newAngle = index * angleStep;
-      const newX = 400 + radius * Math.cos(newAngle);
-      const newY = 300 + radius * Math.sin(newAngle);
+      const newX = centerX + radius * Math.cos(newAngle);
+      const newY = centerY + radius * Math.sin(newAngle);
       updateNodePosition(node.id, { x: newX, y: newY });
     });
+
+    // Auto-zoom to fit all nodes when radius exceeds viewport
+    // Account for node size (120px wide, 90px tall)
+    const nodeMargin = 120; // Max node width + some padding
+    const requiredWidth = (radius * 2) + nodeMargin;
+    const requiredHeight = (radius * 2) + nodeMargin;
+
+    // Calculate zoom needed to fit (use smaller dimension as constraint)
+    const zoomX = canvasWidth / requiredWidth;
+    const zoomY = canvasHeight / requiredHeight;
+    const requiredZoom = Math.min(1.0, zoomX, zoomY);
+
+    // Only zoom out if needed (don't zoom in)
+    // Only auto-zoom when adding nodes, don't interfere with manual zoom
+    if (requiredZoom < 1.0 && requiredZoom < state.viewTransform.zoom) {
+      updateViewTransform({ zoom: requiredZoom });
+    }
   };
 
   const handleNodeNameChange = (nodeId: string, name: string) => {
@@ -194,6 +219,9 @@ export function Canvas() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+        {/* Trust arrows layer (not transformed) */}
+        <TrustArrows nodes={state.nodes} viewTransform={state.viewTransform} />
+
         <div
           className={styles.canvasTransform}
           style={{
@@ -201,9 +229,6 @@ export function Canvas() {
             transformOrigin: 'center center',
           }}
         >
-          {/* Trust arrows between nodes */}
-          <TrustArrows nodes={state.nodes} />
-
           {/* Render all nodes */}
           {state.nodes.map((node) => (
             <Node

@@ -38,17 +38,17 @@ export function Node({
 
   const handleDragStart = useCallback(
     (nodeId: string, screenPos: Position) => {
-      // Store initial position for offset calculations
-      dragStartPos.current = position;
+      // Store initial screen position for delta calculations
+      dragStartPos.current = screenPos;
     },
-    [position]
+    []
   );
 
   const handleDragMove = useCallback(
     (nodeId: string, screenPos: Position) => {
       if (!onPositionChange) return;
 
-      // Calculate delta from drag start
+      // Calculate delta from drag start (screen coordinates)
       const deltaX = screenPos.x - dragStartPos.current.x;
       const deltaY = screenPos.y - dragStartPos.current.y;
 
@@ -70,19 +70,24 @@ export function Node({
     disabled: isSelf || isEditing, // Disable drag when editing
   });
 
-  const handleClick = useCallback(() => {
-    // Single click opens trust scoring (unless it's the self node)
-    if (!isSelf && !isEditing && onStartScoring) {
-      onStartScoring(id);
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // Don't open edit mode if clicking on a button
+    if ((e.target as HTMLElement).tagName === 'BUTTON') {
+      return;
     }
-  }, [id, isSelf, isEditing, onStartScoring]);
-
-  const handleDoubleClick = useCallback(() => {
+    // Single click enables edit mode (rename)
     if (!isSelf && onStartEdit) {
       onStartEdit(id);
       setEditValue(name);
     }
   }, [id, name, isSelf, onStartEdit]);
+
+  const handleDoubleClick = useCallback(() => {
+    // Double click opens trust scoring
+    if (!isSelf && !isEditing && onStartScoring) {
+      onStartScoring(id);
+    }
+  }, [id, isSelf, isEditing, onStartScoring]);
 
   const handleEditKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -139,13 +144,31 @@ export function Node({
     >
       <div className={styles.nodeCircle}>
         {!isSelf && !isEditing && (
-          <button
-            className={styles.removeButton}
-            onClick={handleRemove}
-            title="Remove person"
-          >
-            ×
-          </button>
+          <>
+            <button
+              className={styles.trustButton}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onStartScoring?.(id);
+              }}
+              title="Set trust score"
+            >
+              ♥
+            </button>
+            <button
+              className={styles.removeButton}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
+              onClick={handleRemove}
+              title="Remove person"
+            >
+              ×
+            </button>
+          </>
         )}
       </div>
       {isEditing ? (

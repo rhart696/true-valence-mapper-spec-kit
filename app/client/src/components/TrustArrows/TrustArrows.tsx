@@ -1,7 +1,8 @@
-import type { PersonNode, TrustLevel } from '../../types';
+import type { PersonNode, TrustLevel, ViewTransform } from '../../types';
 
 interface TrustArrowsProps {
   nodes: PersonNode[];
+  viewTransform: ViewTransform;
 }
 
 /**
@@ -17,20 +18,20 @@ interface TrustArrowsProps {
  * - Red: low trust
  * - Gray: unscored
  */
-export function TrustArrows({ nodes }: TrustArrowsProps) {
+export function TrustArrows({ nodes, viewTransform }: TrustArrowsProps) {
   const selfNode = nodes.find((n) => n.isSelf);
   if (!selfNode) return null;
 
   const getTrustColor = (level: TrustLevel): string => {
     switch (level) {
       case 'high':
-        return 'var(--trust-high)';
+        return 'rgb(16, 185, 129)'; // Green - Tailwind emerald-500
       case 'medium':
-        return 'var(--trust-medium)';
+        return 'rgb(234, 179, 8)'; // Yellow - Tailwind yellow-500
       case 'low':
-        return 'var(--trust-low)';
+        return 'rgb(239, 68, 68)'; // Red - Tailwind red-500
       case 'unscored':
-        return 'var(--trust-unscored)';
+        return 'rgb(148, 163, 184)'; // Gray - Tailwind slate-400
     }
   };
 
@@ -47,6 +48,9 @@ export function TrustArrows({ nodes }: TrustArrowsProps) {
         height: '100%',
         pointerEvents: 'none',
         zIndex: 0,
+        overflow: 'visible',
+        transform: `scale(${viewTransform.zoom}) translate(${viewTransform.panX}px, ${viewTransform.panY}px)`,
+        transformOrigin: 'center center',
       }}
     >
       <defs>
@@ -101,33 +105,48 @@ export function TrustArrows({ nodes }: TrustArrowsProps) {
         const { trustScore } = node;
         if (!trustScore) return null;
 
-        // Calculate offset to start/end arrows at edge of circles (30px radius)
-        const dx = node.position.x - selfNode.position.x;
-        const dy = node.position.y - selfNode.position.y;
+        // Node positions are top-left corners of 120px wide containers
+        // Circle is at left: 30px, width: 60px, so center is at x + 60px, y + 30px
+        const NODE_RADIUS = 30;
+        const CIRCLE_CENTER_X_OFFSET = 60; // 30px (left position) + 30px (radius)
+        const CIRCLE_CENTER_Y_OFFSET = 30; // Circle is at top, so just radius
+
+        const selfCenter = {
+          x: selfNode.position.x + CIRCLE_CENTER_X_OFFSET,
+          y: selfNode.position.y + CIRCLE_CENTER_Y_OFFSET,
+        };
+        const nodeCenter = {
+          x: node.position.x + CIRCLE_CENTER_X_OFFSET,
+          y: node.position.y + CIRCLE_CENTER_Y_OFFSET,
+        };
+
+        // Calculate offset to start/end arrows at edge of circles
+        const dx = nodeCenter.x - selfCenter.x;
+        const dy = nodeCenter.y - selfCenter.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const offsetX = (dx / distance) * 30;
-        const offsetY = (dy / distance) * 30;
+        const offsetX = (dx / distance) * NODE_RADIUS;
+        const offsetY = (dy / distance) * NODE_RADIUS;
 
         // Outward arrow: from self to person
         const outwardStart = {
-          x: selfNode.position.x + offsetX,
-          y: selfNode.position.y + offsetY,
+          x: selfCenter.x + offsetX,
+          y: selfCenter.y + offsetY,
         };
         const outwardEnd = {
-          x: node.position.x - offsetX,
-          y: node.position.y - offsetY,
+          x: nodeCenter.x - offsetX,
+          y: nodeCenter.y - offsetY,
         };
 
         // Inward arrow: from person to self (slightly offset for visibility)
         const perpX = -dy / distance * 8; // Perpendicular offset
         const perpY = dx / distance * 8;
         const inwardStart = {
-          x: node.position.x + offsetX + perpX,
-          y: node.position.y + offsetY + perpY,
+          x: nodeCenter.x - offsetX + perpX,
+          y: nodeCenter.y - offsetY + perpY,
         };
         const inwardEnd = {
-          x: selfNode.position.x - offsetX + perpX,
-          y: selfNode.position.y - offsetY + perpY,
+          x: selfCenter.x + offsetX + perpX,
+          y: selfCenter.y + offsetY + perpY,
         };
 
         return (
