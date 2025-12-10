@@ -1,5 +1,4 @@
 import type { PersonNode } from './node';
-import type { Position } from './position';
 
 /**
  * View transformation state for zoom and pan.
@@ -48,4 +47,10 @@ export interface CanvasState {
    * Used to track inline editing state.
    */
   editingNodeId: string | null;
+
+  /**
+   * ID of the node currently selected, or null if none.
+   * Used for keyboard operations (delete, etc).
+   */
+  selectedNodeId: string | null;
 }
