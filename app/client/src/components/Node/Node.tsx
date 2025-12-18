@@ -6,12 +6,14 @@ import styles from './Node.module.css';
 interface NodeProps {
   node: PersonNode;
   isEditing?: boolean;
+  isSelected?: boolean;
   onPositionChange?: (nodeId: string, position: Position) => void;
   onNameChange?: (nodeId: string, name: string) => void;
   onRemove?: (nodeId: string) => void;
   onStartEdit?: (nodeId: string) => void;
   onStopEdit?: () => void;
   onStartScoring?: (nodeId: string) => void;
+  onSelect?: (nodeId: string) => void;
 }
 
 /**
@@ -25,19 +27,21 @@ interface NodeProps {
 export function Node({
   node,
   isEditing = false,
+  isSelected = false,
   onPositionChange,
   onNameChange,
   onRemove,
   onStartEdit,
   onStopEdit,
   onStartScoring,
+  onSelect,
 }: NodeProps) {
   const { id, name, position, isSelf } = node;
   const dragStartPos = useRef<Position>(position);
   const [editValue, setEditValue] = useState(name);
 
   const handleDragStart = useCallback(
-    (nodeId: string, screenPos: Position) => {
+    (_nodeId: string, screenPos: Position) => {
       // Store initial screen position for delta calculations
       dragStartPos.current = screenPos;
     },
@@ -71,16 +75,18 @@ export function Node({
   });
 
   const handleClick = useCallback((e: React.MouseEvent) => {
-    // Don't open edit mode if clicking on a button
+    // Don't handle if clicking on a button
     if ((e.target as HTMLElement).tagName === 'BUTTON') {
       return;
     }
-    // Single click enables edit mode (rename)
+    // Select the node on click
+    onSelect?.(id);
+    // Single click enables edit mode (rename) for non-self nodes
     if (!isSelf && onStartEdit) {
       onStartEdit(id);
       setEditValue(name);
     }
-  }, [id, name, isSelf, onStartEdit]);
+  }, [id, name, isSelf, onStartEdit, onSelect]);
 
   const handleDoubleClick = useCallback(() => {
     // Double click opens trust scoring
@@ -131,7 +137,7 @@ export function Node({
     <div
       className={`${styles.node} ${isSelf ? styles.selfNode : ''} ${
         isEditing ? styles.editing : ''
-      }`}
+      } ${isSelected ? styles.selected : ''}`}
       style={{
         transform: `translate(${position.x}px, ${position.y}px)`,
       }}
