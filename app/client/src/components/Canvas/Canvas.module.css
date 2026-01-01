@@ -32,6 +32,13 @@
   position: relative;
   overflow: hidden;
   touch-action: none; /* Prevent default touch gestures */
+  outline: none; /* Remove default focus outline */
+}
+
+/* Keyboard focus indicator */
+.canvas:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Transform layer - applies zoom and pan */
