@@ -138,4 +138,4 @@ export function ExampleComponent({ value, onChange }: Props) {
 
 *This file is auto-generated from parent repo template. Manual edits may be overwritten.*
 *Template version: 1.2.0*
-*Last sync: 2025-12-02*
+*Last sync: 2026-01-01*
